@@ -9,8 +9,8 @@ import pandas as pd
 from bs4 import BeautifulSoup as soup
 import os
 import urllib.request
+import numpy as np
 
-url = "https://www.11v11.com/teams/swansea-city/tab/matches/season/2020/"
 
 def get_website(url):
     
@@ -20,6 +20,8 @@ def get_website(url):
     page_soup_test = soup(html, "html.parser")
 
     return page_soup_test
+
+x=get_website("https://www.parkrun.org.uk/porthcawl/results/latestresults/")
 
 def get_containers_boxes(soup):
     
@@ -71,19 +73,45 @@ def get_info(box):
     return (date, teams, home_team, away_team, opposition, result, 
             score, home_goals,  away_goals, aggregate_score,  penalties,  comp)
 
+def transform_data(df_name):
+    df = pd.read_csv(df_name, sep=",")
+        
+    df["year"] = pd.DatetimeIndex(df["date"]).year
+    df["month"] = pd.DatetimeIndex(df["date"]).month
+    df["day"] = pd.DatetimeIndex(df["date"]).day
+    
+    df=df.replace(to_replace="Swansea Town",value="Swansea City")
+    
+    cols_change_town_city=["date",'teams', 'home_team', 'away_team', 'opposition']
+    
+    for col in cols_change_town_city:
+        df[col]=df[col].replace({"Swansea Town":"Swansea City"}, regex=True)
+    
+    conditions=[df["home_team"]=="Swansea City",df["away_team"]=="Swansea City"]
+    choices=[df["home_goals"],df["away_goals"]]
+    df["swansea_goal"]=np.select(conditions, choices)
+    
+    conditions=[df["home_team"]!="Swansea City",df["away_team"]!="Swansea City"]
+    choices=[df["home_goals"],df["away_goals"]]
+    df["opposition_goals"]=np.select(conditions, choices)
+    
+    df.to_csv(df_name)
+        
+
 
 if __name__ == "__main__":
     
-    f = open("swanseacitymatches.csv", "w", errors="ignore")
+    file_name="swanseacitymatches.txt"
+    f = open(file_name, "w", errors="ignore")
     
     seasons = list(range(1945,2021))
     seasons = [str(i) for i in seasons]
     
-    f.write("Date" + "," + "Teams" + "," + "Home_team" "," + "Away_team" + "," 
-            "Opposition" + "," + "Result" + "," + "Score" + "," + "Home_goals" 
-            + "," + "Away_goals" 
-            + "," + "Aggregrate_score" + "," + "Peanalties" + "," + "Competition" + 
-            "," + "Season" + "\n")
+    f.write("date" + "," + "teams" + "," + "home_team" "," + "away_team" + "," 
+            "opposition" + "," + "result" + "," + "score" + "," + "home_goals" 
+            + "," + "away_goals" 
+            + "," + "aggregrate_score" + "," + "peanalties" + "," + "competition" + 
+            "," + "season" + "\n")
     
     for season in seasons:
         url="https://www.11v11.com/teams/swansea-city/tab/matches/season/"+season+"/"
@@ -99,6 +127,10 @@ if __name__ == "__main__":
                         info[9]  + "," + info[10]  + "," + info[11]  + "," + str(int(season)-1) + "\n")
     
     f.close()
+    
+    transform_data(file_name)
+    
+    
         
         
     
