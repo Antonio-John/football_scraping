@@ -7,12 +7,13 @@ Created on Tue Aug 24 13:10:03 2021
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from configparser import ConfigParser
 
-df=pd.read_csv("swanseacitymatches.txt")
+df=pd.read_csv("data/transformed/swanseacitymatches.csv")
 
-def filter_team(df, team):
+def filter_team(df, starts_with):
     
-    df_filter=df[df["opposition"]==team]
+    df_filter=df[df.opposition.str.startswith(starts_with)]
     
     return df_filter
 
@@ -23,7 +24,8 @@ def groupby_filtered(df, col):
     return df_groupby
 
 pne=filter_team(df, "Preston North End")
-pne_groupby=groupby_filtered(pne, "result")
+print(pne.head())
+#pne_groupby=groupby_filtered(pne, "result")
 
 
 

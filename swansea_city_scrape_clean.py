@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup as soup
 import os
 import urllib.request
 import numpy as np
-
+from configparser import ConfigParser
 
 def get_website(url):
     
@@ -20,8 +20,6 @@ def get_website(url):
     page_soup_test = soup(html, "html.parser")
 
     return page_soup_test
-
-x=get_website("https://www.parkrun.org.uk/porthcawl/results/latestresults/")
 
 def get_containers_boxes(soup):
     
@@ -74,6 +72,7 @@ def get_info(box):
             score, home_goals,  away_goals, aggregate_score,  penalties,  comp)
 
 def transform_data(df_name):
+
     df = pd.read_csv(df_name, sep=",")
         
     df["year"] = pd.DatetimeIndex(df["date"]).year
@@ -95,13 +94,16 @@ def transform_data(df_name):
     choices=[df["home_goals"],df["away_goals"]]
     df["opposition_goals"]=np.select(conditions, choices)
     
-    df.to_csv(df_name)
+    return df
         
 
 
 if __name__ == "__main__":
+
+    config=ConfigParser()
+    config.read("config.ini")
     
-    file_name="swanseacitymatches.txt"
+    file_name="data/raw/swanseacitymatches.txt"
     f = open(file_name, "w", errors="ignore")
     
     seasons = list(range(1945,2021))
@@ -128,7 +130,11 @@ if __name__ == "__main__":
     
     f.close()
     
-    transform_data(file_name)
+    transformed_df=transform_data(file_name)
+
+    transformed_df.to_csv("data/transformed/swanseacitymatches.csv")
+
+
     
     
         
