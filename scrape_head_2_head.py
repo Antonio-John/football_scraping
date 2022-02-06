@@ -1,17 +1,28 @@
-import pandas as pd
 from configparser import ConfigParser
-from football_tools import get_website
+
+import football_tools as ft
 
 # Read in config file
 config = ConfigParser()
 config.read('config.ini')
 
-# home and away team
+# config items needed
+# TODO: Dynamically create link from teams
 home_team=config.get('team_info', 'hometeam')
 away_team=config.get('team_info', 'awayteam')
+head_2_head_url=config.get("url", "head_2_head")
+CWD=config.get("directories", "head_2_head_dir")
 
-url="https://www.11v11.com/teams/"+home_team+"/tab/opposingTeams/opposition/"+away_team
-html_soup=get_wesbite(url)
-print(html_soup)
+# get html soup from website url
+html_soup=ft.get_website(url=head_2_head_url)
+
+# gets dataframe from the html soup
+df_of_matches=ft.get_all_matches(soup=html_soup)
+
+# save out dataframe
+ft.save_csv(cwd=CWD,
+            file=df_of_matches)
+
+
 
 

@@ -1,5 +1,8 @@
+from operator import index
 import urllib.request
 from bs4 import BeautifulSoup as soup
+import pandas as pd
+import os
 
 def get_website(url):
     """
@@ -11,3 +14,103 @@ def get_website(url):
     page_soup_test = soup(html, "html.parser")
 
     return page_soup_test
+
+def get_all_matches(soup):
+    """
+    get's all the matches from the table
+    """
+    # set up dataframe
+    df=pd.DataFrame({"date":[],
+                     "match":[],
+                     "result":[],
+                     "score":[],
+                     "competition":[]})
+
+    # get big table of matches
+    big_table=soup.findAll("tbody")[0]
+    matches=big_table.findAll("tr")
+
+    # iterate though all matches and append to data
+    for i in range(len(matches)-1):
+        one_match=matches[i]
+        entries=one_match.findAll("td")
+        date=entries[0].text
+        link=entries[1].text
+        result=entries[2].text
+        score=entries[3].text
+        competition=entries[4].text
+
+        df.loc[len(df)] = [date,link,result,score,competition]
+
+    return df
+
+def save_csv(cwd, file):
+    """
+    given cwd and file will save the file
+    with the name of the teams
+    """
+
+    # gets name of match to call it the file this
+    match=file["match"].iloc[len(file)-1]
+    match=match.replace(" ", "")
+
+    # extracts away team
+    folder=match.replace("SwanseaCity", "")
+    folder=folder[0:len(folder)-1]
+
+    # creates folder for away team
+    if not os.path.exists(cwd+folder):
+        os.mkdir(cwd+folder) 
+
+    file.to_csv(cwd+folder+"/"+match+".csv",
+                index=False)
+
+def read_latest_excel(cwd):
+    """
+    reads in latest file 
+    """
+    # lists files and get's the latest one
+    files=os.listdir(cwd)
+    wanted=[file for file in files if file.endswith(".csv")]
+    wanted_with_path=[cwd+"/"+file for file in wanted]
+    latest_file = max(wanted_with_path, key=os.path.getctime)
+
+    # use pandas to read in
+    df=pd.read_csv(latest_file)
+
+    return df
+
+
+def change_team_names(df, old_name, new_name):
+    """
+    changes old team name to new name
+    e.g Swansea Town to Swansea City
+
+    """
+    for col in df.columns:
+        if type(col) == str:
+            df[col] = df[col].str.replace(old_name, new_name)
+   
+
+    return df
+
+def split_home_away(df):
+
+    df['home_team'] = df['match'].str.split(' v ', expand=True)[1]
+    df['away_team'] = df['match'].str.split(' v ', expand=True)[0]
+
+    df["home_goals"]=df["score"].str.split("-", expand=True)[0]
+    df["away_goals"]=df["score"].str.split("-", expand=True)[1]
+
+    return df
+
+def clean_and_derive(df):
+
+    df=split_home_away(df)
+
+    return df
+
+
+
+    
+    
