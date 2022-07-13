@@ -4,10 +4,8 @@ Created on Tue Aug 24 11:12:39 2021
 
 @author: 44752
 """
-
 import pandas as pd
 from bs4 import BeautifulSoup as soup
-import os
 import urllib.request
 import numpy as np
 from configparser import ConfigParser
@@ -96,8 +94,6 @@ def transform_data(df_name):
     
     return df
         
-
-
 if __name__ == "__main__":
 
     # read in config files
@@ -109,9 +105,9 @@ if __name__ == "__main__":
     f = open(file_name, "w", errors="ignore")
     
     # set up seasons want to get data for
-    start_season = config.get("seasons", "start")
-    end_season = config.get("seasons", "end")
-    seasons = list(range(start_season, end_season))
+    start_season = int(config.get("seasons", "start"))
+    end_season = int(config.get("seasons", "end"))
+    seasons = list(range(start_season, end_season+1))
     seasons = [str(i) for i in seasons]
     
     # write in column headers 
