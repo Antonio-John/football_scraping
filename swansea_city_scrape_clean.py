@@ -100,26 +100,34 @@ def transform_data(df_name):
 
 if __name__ == "__main__":
 
-    config=ConfigParser()
+    # read in config files
+    config = ConfigParser()
     config.read("config.ini")
     
-    file_name="data/raw/swanseacitymatches.txt"
+    # set up file path to save to
+    file_name = "data/raw/swanseacitymatches.txt"
     f = open(file_name, "w", errors="ignore")
     
-    seasons = list(range(1945,2021))
+    # set up seasons want to get data for
+    start_season = config.get("seasons", "start")
+    end_season = config.get("seasons", "end")
+    seasons = list(range(start_season, end_season))
     seasons = [str(i) for i in seasons]
     
+    # write in column headers 
     f.write("date" + "," + "teams" + "," + "home_team" "," + "away_team" + "," 
             "opposition" + "," + "result" + "," + "score" + "," + "home_goals" 
             + "," + "away_goals" 
             + "," + "aggregrate_score" + "," + "peanalties" + "," + "competition" + 
             "," + "season" + "\n")
     
+    # scrape for each season
     for season in seasons:
         url="https://www.11v11.com/teams/swansea-city/tab/matches/season/"+season+"/"
         website=get_website(url)
         matches=get_containers_boxes(website)
         
+        # get info for each match
         for match in range(1, len(matches)):
             info=get_info(matches[match])
             
@@ -128,10 +136,13 @@ if __name__ == "__main__":
                         + info[6]  + "," + info[7]  + "," + info[8]  + "," + 
                         info[9]  + "," + info[10]  + "," + info[11]  + "," + str(int(season)-1) + "\n")
     
+    # close file
     f.close()
     
+    # add in derived variables
     transformed_df=transform_data(file_name)
 
+    # save out clean file
     transformed_df.to_csv("data/transformed/swanseacitymatches.csv")
 
 
