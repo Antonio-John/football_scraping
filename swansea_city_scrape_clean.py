@@ -71,6 +71,7 @@ def get_info(box):
 
 def transform_data(df_name):
 
+    # look through this logic s
     df = pd.read_csv(df_name, sep=",")
         
     df["year"] = pd.DatetimeIndex(df["date"]).year
