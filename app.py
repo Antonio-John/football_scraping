@@ -7,6 +7,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np 
 
+import app_tools as app
+
 
 # reading in the data
 df = pd.read_csv(os.path.join("data",
@@ -33,6 +35,12 @@ caption="Wherever Swansea City go, the north bank goes aswell")
 # this is a container
 c = st.container()
 c.write("Top of cotainer")
+
+# chart 
+df_home_team = df[["away_goals","home_goals"]]
+
+# needs editing 
+st.bar_chart(data=df_home_team)
 
 # information message
 #st.info('This is a purely informational message')
