@@ -1,11 +1,16 @@
 from configparser import ConfigParser
-import os
+
+# set ups directorys for imports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 import football_tools as ft
 
 # Read in config file
 config = ConfigParser()
-config.read('config.ini')
+config.read(os.path.join("code",'config.ini'))
 away_team=config.get('team_info', 'awayteam')
 CWD=config.get("directories", "head_2_head_dir")
 
@@ -22,3 +27,4 @@ df_clean=ft.clean_and_derive(df=df_clean)
 
 #TODO Lookup file 
 # dates for month, years etc
+# save out 
