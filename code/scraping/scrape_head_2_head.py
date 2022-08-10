@@ -1,6 +1,6 @@
 from configparser import ConfigParser
 
-import football_tools as ft
+from ..scraping import football_tools as ft
 
 # Read in config file
 config = ConfigParser()
