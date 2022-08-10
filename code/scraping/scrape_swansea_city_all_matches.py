@@ -4,11 +4,17 @@ Created on Tue Aug 24 11:12:39 2021
 
 @author: 44752
 """
-import pandas as pd
 from bs4 import BeautifulSoup as soup
 import urllib.request
-import numpy as np
 from configparser import ConfigParser
+
+# set ups directorys for imports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+import football_tools as ft
 
 def get_website(url):
     
@@ -75,10 +81,11 @@ if __name__ == "__main__":
 
     # read in config files
     config = ConfigParser()
-    config.read("config.ini")
+    config.read(os.path.join("code",'config.ini'))
     
     # set up file path to save to
-    file_name = "data/raw/swanseacitymatches.txt"
+    file_name = os.path.join("data",'raw',"swanseacitymatches.txt")
+    #file_name = "data/raw/swanseacitymatches.txt"
     f = open(file_name, "w", errors="ignore")
     
     # set up seasons want to get data for
