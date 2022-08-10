@@ -2,9 +2,16 @@
 
 # third party imports
 import pandas as pd
+import numpy as np
+
+# set ups directorys for imports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 # modules imports
-from .. import football_tools
+import football_tools as ft
 
 def transform_data(df_name):
 
@@ -34,8 +41,9 @@ def transform_data(df_name):
 
 if __name__ == "__main__":
 
-    file_name = "data/raw/swanseacitymatches.txt"
-    transformed_df=transform_data(file_name)
+    file_name = os.path.join("data","raw","swanseacitymatches.txt")
+    transformed_df = transform_data(file_name)
 
     # save out clean file
-    transformed_df.to_csv("data/transformed/swanseacitymatches.csv")
+    output_path = os.path.join("data","transformed", "swanseacitymatches.csv")
+    transformed_df.to_csv()
