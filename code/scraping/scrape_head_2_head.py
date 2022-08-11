@@ -1,10 +1,17 @@
+# core imports 
 from configparser import ConfigParser
+
+# set ups directorys for imports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 import football_tools as ft
 
 # Read in config file
 config = ConfigParser()
-config.read('config.ini')
+config.read(os.path.join("code",'config.ini'))
 
 # config items needed
 # TODO: Dynamically create link from teams

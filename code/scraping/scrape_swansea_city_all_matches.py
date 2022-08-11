@@ -4,11 +4,17 @@ Created on Tue Aug 24 11:12:39 2021
 
 @author: 44752
 """
-import pandas as pd
 from bs4 import BeautifulSoup as soup
 import urllib.request
-import numpy as np
 from configparser import ConfigParser
+
+# set ups directorys for imports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+import football_tools as ft
 
 def get_website(url):
     
@@ -69,40 +75,17 @@ def get_info(box):
     return (date, teams, home_team, away_team, opposition, result, 
             score, home_goals,  away_goals, aggregate_score,  penalties,  comp)
 
-def transform_data(df_name):
 
-    # look through this logic s
-    df = pd.read_csv(df_name, sep=",")
-        
-    df["year"] = pd.DatetimeIndex(df["date"]).year
-    df["month"] = pd.DatetimeIndex(df["date"]).month
-    df["day"] = pd.DatetimeIndex(df["date"]).day
-    
-    df=df.replace(to_replace="Swansea Town",value="Swansea City")
-    
-    cols_change_town_city=["date",'teams', 'home_team', 'away_team', 'opposition']
-    
-    for col in cols_change_town_city:
-        df[col]=df[col].replace({"Swansea Town":"Swansea City"}, regex=True)
-    
-    conditions=[df["home_team"]=="Swansea City",df["away_team"]=="Swansea City"]
-    choices=[df["home_goals"],df["away_goals"]]
-    df["swansea_goal"]=np.select(conditions, choices)
-    
-    conditions=[df["home_team"]!="Swansea City",df["away_team"]!="Swansea City"]
-    choices=[df["home_goals"],df["away_goals"]]
-    df["opposition_goals"]=np.select(conditions, choices)
-    
-    return df
         
 if __name__ == "__main__":
 
     # read in config files
     config = ConfigParser()
-    config.read("config.ini")
+    config.read(os.path.join("code",'config.ini'))
     
     # set up file path to save to
-    file_name = "data/raw/swanseacitymatches.txt"
+    file_name = os.path.join("data",'raw',"swanseacitymatches.txt")
+    #file_name = "data/raw/swanseacitymatches.txt"
     f = open(file_name, "w", errors="ignore")
     
     # set up seasons want to get data for
@@ -136,11 +119,7 @@ if __name__ == "__main__":
     # close file
     f.close()
     
-    # add in derived variables
-    transformed_df=transform_data(file_name)
 
-    # save out clean file
-    transformed_df.to_csv("data/transformed/swanseacitymatches.csv")
 
 
     
