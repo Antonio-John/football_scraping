@@ -9,6 +9,9 @@ sys.path.append(parentdir)
 
 import football_tools as ft
 
+#CWD
+CWD = os.getcwd()
+
 # Read in config file
 config = ConfigParser()
 config.read(os.path.join("code",'config.ini'))
@@ -35,8 +38,7 @@ html_soup = ft.get_website(url=url_head_head)
 df_of_matches = ft.get_all_matches(soup=html_soup)
 
 # output path 
-head_2_head = config.get("directories", "head_2_head_dir")
-raw_dir = os.path.join(head_2_head,"raw")
+raw_dir = os.path.join(CWD,"data","head_2_head","raw")
 principal_team = os.path.join(raw_dir,team_1)
 
 if not os.path.exists(principal_team):
