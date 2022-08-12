@@ -54,15 +54,9 @@ def save_csv(cwd, file):
     match=file["match"].iloc[len(file)-1]
     match=match.replace(" ", "")
 
-    # extracts away team
-    folder=match.replace("SwanseaCity", "")
-    folder=folder[0:len(folder)-1]
-
-    # creates folder for away team
-    if not os.path.exists(cwd+folder):
-        os.mkdir(cwd+folder) 
-
-    file.to_csv(cwd+folder+"/"+match+".csv",
+    # file name
+    file_name = os.path.join(cwd,f"{match}.csv")
+    file.to_csv(file_name,
                 index=False)
 
 def read_latest_excel(cwd):
@@ -110,7 +104,11 @@ def clean_and_derive(df):
 
     return df
 
+def format_team_nm_for_scraping(team_name:str):
 
+    team_name_adjusted = team_name.replace(" ", "%20")
+
+    return team_name_adjusted
 
     
     
