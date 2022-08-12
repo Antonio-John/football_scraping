@@ -13,17 +13,20 @@ import football_tools as ft
 config = ConfigParser()
 config.read(os.path.join("code",'config.ini'))
 
-# config items needed
-# TODO: Dynamically create link from teams
+# get info from config
 team_1 = config.get('team_info', 'team_1')
 team_2 =config.get('team_info', 'team_2')
 head_2_head_url_dir = config.get("url", "head_2_head")
 
-# get url link to scrape with 
-team_name_for_url = ft.format_team_nm_for_scraping(team_2)
+# swansea-city/tab/opposingTeams/opposition/
+
+# get team names in right format to scrape 
+team_1_name_for_url = ft.format_team_1_nm_for_scraping(team_1)
+team_2_name_for_url = ft.format_team_2_nm_for_scraping(team_2)
 
 # dir url + specific team name
-url_head_head = os.path.join(head_2_head_url_dir, team_name_for_url)
+url_head_head = head_2_head_url_dir + team_1_name_for_url + \
+             "/tab/opposingTeams/opposition/" + team_2_name_for_url
 
 # get html soup from website url
 html_soup = ft.get_website(url=url_head_head)

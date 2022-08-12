@@ -104,9 +104,17 @@ def clean_and_derive(df):
 
     return df
 
-def format_team_nm_for_scraping(team_name:str):
+def format_team_2_nm_for_scraping(team_name:str):
 
     team_name_adjusted = team_name.replace(" ", "%20")
+
+    return team_name_adjusted
+
+
+def format_team_1_nm_for_scraping(team_name:str):
+
+    team_lower = team_name.lower()
+    team_name_adjusted = team_lower.replace(" ", "-")
 
     return team_name_adjusted
 
