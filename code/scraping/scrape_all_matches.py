@@ -5,7 +5,6 @@ Created on Tue Aug 24 11:12:39 2021
 @author: 44752
 """
 from bs4 import BeautifulSoup as soup
-import urllib.request
 from configparser import ConfigParser
 
 # set ups directorys for imports
@@ -15,15 +14,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 import football_tools as ft
-
-def get_website(url):
-    
-    agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36 OPR/77.0.4054.277"
-    r = urllib.request.Request(url, headers= {'User-Agent' : agent})
-    html = urllib.request.urlopen(r)
-    page_soup_test = soup(html, "html.parser")
-
-    return page_soup_test
 
 def get_containers_boxes(soup):
     
@@ -82,11 +72,24 @@ if __name__ == "__main__":
     # read in config files
     config = ConfigParser()
     config.read(os.path.join("code",'config.ini'))
+    team = config.get("seasons","team")
     
+    # create directory within raw
+    principal_team = os.path.join("data","all_matches",
+                                'raw',team)
+
+    # create sub directory of folder
+    if not os.path.exists(principal_team):
+        os.mkdir(principal_team)
+
     # set up file path to save to
-    file_name = os.path.join("data",'raw',"swanseacitymatches.txt")
-    #file_name = "data/raw/swanseacitymatches.txt"
+    file_name = os.path.join(principal_team,f"{team.strip()}matches.txt")
+    
     f = open(file_name, "w", errors="ignore")
+
+    
+
+
     
     # set up seasons want to get data for
     start_season = int(config.get("seasons", "start"))
@@ -101,10 +104,13 @@ if __name__ == "__main__":
             + "," + "aggregrate_score" + "," + "peanalties" + "," + "competition" + 
             "," + "season" + "\n")
     
+    # team name for the URL
+    team_name = ft.format_team_1_nm_for_scraping(team)
+    
     # scrape for each season
     for season in seasons:
-        url="https://www.11v11.com/teams/swansea-city/tab/matches/season/"+season+"/"
-        website=get_website(url)
+        url=f"https://www.11v11.com/teams/{team_name}/tab/matches/season/"+season+"/"
+        website=ft.get_website(url)
         matches=get_containers_boxes(website)
         
         # get info for each match

@@ -9,26 +9,45 @@ sys.path.append(parentdir)
 
 import football_tools as ft
 
+#CWD
+CWD = os.getcwd()
+
 # Read in config file
 config = ConfigParser()
 config.read(os.path.join("code",'config.ini'))
 
-# config items needed
-# TODO: Dynamically create link from teams
-home_team=config.get('team_info', 'hometeam')
-away_team=config.get('team_info', 'awayteam')
-head_2_head_url=config.get("url", "head_2_head")
-CWD=config.get("directories", "head_2_head_dir")
+# get info from config
+team_1 = config.get('team_info', 'team_1')
+team_2 =config.get('team_info', 'team_2')
+head_2_head_url_dir = config.get("url", "head_2_head")
+
+# swansea-city/tab/opposingTeams/opposition/
+
+# get team names in right format to scrape 
+team_1_name_for_url = ft.format_team_1_nm_for_scraping(team_1)
+team_2_name_for_url = ft.format_team_2_nm_for_scraping(team_2)
+
+# dir url + specific team name
+url_head_head = head_2_head_url_dir + team_1_name_for_url + \
+             "/tab/opposingTeams/opposition/" + team_2_name_for_url
 
 # get html soup from website url
-html_soup=ft.get_website(url=head_2_head_url)
+html_soup = ft.get_website(url=url_head_head)
 
 # gets dataframe from the html soup
-df_of_matches=ft.get_all_matches(soup=html_soup)
+df_of_matches = ft.get_all_matches(soup=html_soup)
+
+# output path 
+raw_dir = os.path.join(CWD,"data","head_2_head","raw")
+principal_team = os.path.join(raw_dir,team_1+"v"+team_2)
+
+if not os.path.exists(principal_team):
+    os.mkdir(principal_team)
 
 # save out dataframe
-ft.save_csv(cwd=CWD,
-            file=df_of_matches)
+ft.save_csv(cwd=principal_team,
+            file=df_of_matches,
+            teams=(team_1, team_2))
 
 
 
