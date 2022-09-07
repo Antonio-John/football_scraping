@@ -3,6 +3,13 @@ import urllib.request
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 import os
+from configparser import ConfigParser
+
+config = ConfigParser()
+config.read(os.path.join("code",'config.ini'))
+
+TEAM1 = config.get('team_info', 'team_1')
+TEAM2 = config.get('team_info', 'team_2')
 
 def get_website(url):
     """
@@ -44,18 +51,17 @@ def get_all_matches(soup):
 
     return df
 
-def save_csv(cwd, file):
+def save_csv(cwd, file, teams):
     """
     given cwd and file will save the file
     with the name of the teams
     """
 
     # gets name of match to call it the file this
-    match=file["match"].iloc[len(file)-1]
-    match=match.replace(" ", "")
+    (team1, team2) = teams
 
     # file name
-    file_name = os.path.join(cwd,f"{match}.csv")
+    file_name = os.path.join(cwd,f"{team1}v{team2}.csv")
     file.to_csv(file_name,
                 index=False)
 

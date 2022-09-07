@@ -39,14 +39,15 @@ df_of_matches = ft.get_all_matches(soup=html_soup)
 
 # output path 
 raw_dir = os.path.join(CWD,"data","head_2_head","raw")
-principal_team = os.path.join(raw_dir,team_1)
+principal_team = os.path.join(raw_dir,team_1+"v"+team_2)
 
 if not os.path.exists(principal_team):
     os.mkdir(principal_team)
 
 # save out dataframe
 ft.save_csv(cwd=principal_team,
-            file=df_of_matches)
+            file=df_of_matches,
+            teams=(team_1, team_2))
 
 
 
