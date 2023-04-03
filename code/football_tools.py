@@ -5,8 +5,18 @@ import pandas as pd
 import os
 from configparser import ConfigParser
 
-config = ConfigParser()
-config.read(os.path.join("code",'config.ini'))
+CWD =  os.path.join(os.getcwd(), "football_scraping")
+
+def load_config(): 
+
+    config = ConfigParser()
+    config.read(os.path.join(CWD,
+                            "code",
+                            "config.ini"))
+    return config
+
+# load config file
+config = load_config()
 
 TEAM1 = config.get('team_info', 'team_1')
 TEAM2 = config.get('team_info', 'team_2')
@@ -123,6 +133,3 @@ def format_team_1_nm_for_scraping(team_name:str):
     team_name_adjusted = team_lower.replace(" ", "-")
 
     return team_name_adjusted
-
-    
-    

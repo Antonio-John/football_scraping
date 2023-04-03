@@ -70,12 +70,11 @@ def get_info(box):
 if __name__ == "__main__":
 
     # read in config files
-    config = ConfigParser()
-    config.read(os.path.join("code",'config.ini'))
+    config = ft.load_config()
     team = config.get("seasons","team")
     
     # create directory within raw
-    principal_team = os.path.join("data","all_matches",
+    principal_team = os.path.join(ft.CWD, "data","all_matches",
                                 'raw',team)
 
     # create sub directory of folder
@@ -86,11 +85,6 @@ if __name__ == "__main__":
     file_name = os.path.join(principal_team,f"{team.strip()}matches.txt")
     
     f = open(file_name, "w", errors="ignore")
-
-    
-
-
-    
     # set up seasons want to get data for
     start_season = int(config.get("seasons", "start"))
     end_season = int(config.get("seasons", "end"))
